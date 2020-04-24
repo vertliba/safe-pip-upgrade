@@ -1,0 +1,6 @@
+*.log
+*.pyc
+.idea
+*.egg-info
+/venv/
+/env/
