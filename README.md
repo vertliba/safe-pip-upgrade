@@ -1,10 +1,10 @@
 Pip-safe-upgrade
 ==================
 
-Pip-safe-upgrade do automatic upgrade your pip requirements to the highest versions the tests pass.
+Pip-safe-upgrade automatically updates your pip requirements to the highest versions the tests pass.
 
 ![build](https://github.com/VVyacheslav/safe-pip-upgrade/workflows/build/badge.svg?branch=master)
-[![codecov](https://codecov.io/gh/VVyacheslav/safe-pip-upgrade/branch/master/graph/badge.svg)](https://codecov.io/gh/just-work/django-admin-smoke)
+[![codecov](https://codecov.io/gh/VVyacheslav/safe-pip-upgrade/branch/master/graph/badge.svg)](https://codecov.io/gh/VVyacheslav/safe-pip-upgrade)
 [![PyPI version](https://badge.fury.io/py/safe-pip-upgrade.svg)](https://badge.fury.io/py/safe-pip-upgrade)
 
 Overview

@@ -21,12 +21,12 @@ class PypiPackageTestCase(TestCase):
     def test_get_latest_version(self):
         version = self.package.last_version
 
-        self.assertEquals('0.5.7', version)
+        self.assertEqual('0.5.7', version)
 
     def test_next_version(self):
         version = self.package.next_version('0.5.1')
 
-        self.assertEquals('0.5.2', version)
+        self.assertEqual('0.5.2', version)
 
     def test_get_middle_version_next_versions(self):
         version = self.package.get_middle_version('0.5.5', '0.5.6')
@@ -34,7 +34,7 @@ class PypiPackageTestCase(TestCase):
 
     def test_get_middle_version(self):
         version = self.package.get_middle_version('0.5', '0.5.5')
-        self.assertEquals('0.5.2', version)
+        self.assertEqual('0.5.2', version)
 
     def test_get_middle_version_from_last(self):
         version = self.package.get_middle_version(self.package.last_version)
@@ -53,7 +53,7 @@ class PackagesTestCase(TestCase):
 
         # test other package adding
         other_package = packages.get_package('djangorestframework')
-        self.assertEquals('djangorestframework', other_package.name)
+        self.assertEqual('djangorestframework', other_package.name)
 
         # test trying to add package existed return doesn't create new object
         same_package = packages.get_package('django')
@@ -82,7 +82,7 @@ class RequirementTestCase(TestCase):
         for line, params in TEST_EXAMPLES.items():
             result = req.split_line(line)
             with self.subTest(line):
-                self.assertEquals(params, result)
+                self.assertEqual(params, result)
 
     def test_recognize_comment(self):
         TEST_EXAMPLES = {
@@ -97,8 +97,8 @@ class RequirementTestCase(TestCase):
         for line, params in TEST_EXAMPLES.items():
             result = req.recognize_comment(line)
             with self.subTest(line):
-                self.assertEquals(params[0], req.type)
-                self.assertEquals(params[1], req.error_version)
+                self.assertEqual(params[0], req.type)
+                self.assertEqual(params[1], req.error_version)
 
     def test_recognize_package_and_version(self):
         TEST_EXAMPLES = {
@@ -113,8 +113,8 @@ class RequirementTestCase(TestCase):
         for line, params in TEST_EXAMPLES.items():
             result = req.recognize_package_and_version(line)
             with self.subTest(line):
-                self.assertEquals(params[0], req.name, 'name')
-                self.assertEquals(params[1], req.version, 'version')
+                self.assertEqual(params[0], req.name, 'name')
+                self.assertEqual(params[1], req.version, 'version')
 
     def test_recognize_all(self):
         TEST_EXAMPLES = {
@@ -132,7 +132,7 @@ class RequirementTestCase(TestCase):
         for line, params in TEST_EXAMPLES.items():
             with self.subTest(line):
                 req = Requirement(line)
-                self.assertEquals(params[0], req.name, 'name')
-                self.assertEquals(params[1], req.version, 'version')
-                self.assertEquals(params[2], req.type, 'type')
-                self.assertEquals(params[3], req.error_version, 'err version')
+                self.assertEqual(params[0], req.name, 'name')
+                self.assertEqual(params[1], req.version, 'version')
+                self.assertEqual(params[2], req.type, 'type')
+                self.assertEqual(params[3], req.error_version, 'err version')
