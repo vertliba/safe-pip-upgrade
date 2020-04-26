@@ -1,0 +1,2 @@
+class SafeUpgradeException(Exception):
+    pass

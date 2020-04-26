@@ -1,13 +1,18 @@
 import logging.config
 
-REQUIREMENTS_FILE = 'deploy/requirements.txt'
-LOCAL_REQUIREMENTS_FILE = r'C:\work\big-project\deploy\requirements\requirements.txt'
+class Config:
+    INI_FILE = 'pip_upgrade.ini'
+    WORKING_DIRECTORY = r'./'
+    LOCAL_REQUIREMENTS_FILE = r'./requirements.txt'
 
-PYTHON_RUNNER = 'compose'
-PROJECT_FOLDER = r'C:\work\big-project'
-COMPOSE_SERVICE_NAME = 'django'
-REMOTE_WORK_DIR = '/app'  # remote working directory
-IGNORE_LINE_STARTS = ('#', '-r', 'https://', 'http://')
+    RUNNER = 'compose'
+
+    # Compose parameters
+    COMPOSE_PROJECT_FOLDER = WORKING_DIRECTORY
+    COMPOSE_REQUIREMENTS_FILE = LOCAL_REQUIREMENTS_FILE
+    COMPOSE_SERVICE_NAME = 'django'
+    COMPOSE_WORK_DIR = './',  # remote working directory
+    IGNORE_LINE_STARTS = ('# -r https:// http:// git+').split()
 
 LOGGING = {
     'version': 1,
@@ -41,3 +46,4 @@ LOGGING = {
 }
 
 logging.config.dictConfig(LOGGING)
+

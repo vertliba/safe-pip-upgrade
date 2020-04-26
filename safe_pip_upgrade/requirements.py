@@ -1,6 +1,7 @@
 import re
 from enum import Enum, auto
 
+from safe_pip_upgrade import SafeUpgradeException
 from safe_pip_upgrade.pypi import packages
 
 
@@ -22,10 +23,6 @@ TEMPLATES = {
     RequirementType.FINAL_LATEST_VERSION: r'the latest working version',
     RequirementType.NOT_LATEST_VERSION: r'error on the version (\S*)',
 }
-
-
-class SafeUpgradeException(Exception):
-    pass
 
 
 class RecognizeException(SafeUpgradeException):
@@ -86,7 +83,6 @@ class Requirement:
         self.version = version_to_test
         return True
 
-
     def get_line(self):
         # type: () -> str
         """ get requirements file line."""
@@ -122,7 +118,7 @@ class Requirement:
     def recognize_package_and_version(self, package):
         match = re.split(r'[>=<~\s,]+', package)
         self.name = match[0]
-        if len(match)>1:
+        if len(match) > 1:
             self.version = match[1]
 
     def split_line(self, line):
@@ -131,6 +127,6 @@ class Requirement:
 
         parts = [s.strip() for s in line.split('#', 1)]
         package = parts[0]
-        comment = parts[1] if len(parts)>=2 else ''
+        comment = parts[1] if len(parts) >= 2 else ''
 
         return package, comment

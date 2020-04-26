@@ -10,7 +10,7 @@ class DockerException(Exception):
 
 
 class ComposeRunner:
-    remote_work_dir = '/app'  # remote working directory
+    remote_work_dir = './'  # remote working directory
     requirements_file_name = 'requirements.txt'
 
     def __init__(self, project_folder, service_name):
