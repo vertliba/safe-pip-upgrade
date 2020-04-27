@@ -81,6 +81,8 @@ class Upgrade:
                 req.fix_error_version()
         self.req_lines[i] = req.get_line()
 
+def start_upgrade():
+    Upgrade(get_client(), get_requirements()).start_upgrade()
 
 if __name__ == '__main__':
-    Upgrade(get_client(), get_requirements()).start_upgrade()
+    start_upgrade()

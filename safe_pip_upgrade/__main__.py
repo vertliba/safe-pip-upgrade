@@ -8,7 +8,8 @@ import argparse
 import os
 import sys
 
-from safe_pip_upgrade.config import Config
+from safe_pip_upgrade.config import Config, config_file
+from safe_pip_upgrade.upgrade import start_upgrade
 
 
 class ManagementUtility:
@@ -25,32 +26,47 @@ class ManagementUtility:
             formatter_class=argparse.RawDescriptionHelpFormatter
         )
 
+        # COMMANDS
+        subparsers  = parser.add_subparsers(help='Command')
+
+        # upgrade
+        parser_upgrade = subparsers.add_parser('UPGRADE', help='start upgrade')
+        parser_upgrade.set_defaults(command_handler=start_upgrade)
+
+        # create ini file
+        parser_create_ini = subparsers.add_parser(
+            'CREATE-INI', help='create example ini file in current directory')
+        parser_create_ini.set_defaults(
+            command_handler=config_file.write_to_file)
+
         # GENERAL SETTINGS
+        general_group = parser.add_argument_group('MAIN PARAMETERS')
+
         # ini file
-        parser.add_argument(
+        general_group.add_argument(
             "-f", "--file", metavar="INI FILE", dest='INI_FILE',
             help='Specify alternate config file. (default: "pip_upgrade.ini)')
 
         # working directory
-        parser.add_argument(
+        general_group.add_argument(
             "-d", "--work-directory", metavar="DIR", dest='WORKING_DIRECTORY',
             help='Specify working directory. (default: current directory)')
 
         # local requirements file
-        parser.add_argument(
+        general_group.add_argument(
             "-r", "--requirement", metavar="FILE",
             dest='LOCAL_REQUIREMENTS_FILE',
             help='Specify local requirements file  '
                  '(default: requirements.txt)')
 
         # runner
-        parser.add_argument(
+        general_group.add_argument(
             "-u", "--runner", metavar="RUNNER", dest='RUNNER',
             help='Specify runner (only "compose" is available now).')
 
 
         # COMPOSE RUNNER SETTINGS
-        compose_group = parser.add_argument_group('compose', 'Compose runner')
+        compose_group = parser.add_argument_group('COMPOSE RUNNER PARAMETERS')
 
         compose_group.add_argument(
             "-cd", "--compose-project-directory", metavar="DIR",
@@ -76,7 +92,9 @@ class ManagementUtility:
             help='Specify an alternate compose working directory in '
                  'container (default: CWD form Dockerfile)'),
 
-        parser.parse_args(namespace=Config)
+        args = parser.parse_args(['CREATE-INI'], namespace=Config)
+        args.command_handler()
+
 
 
 utility = ManagementUtility()
