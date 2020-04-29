@@ -63,12 +63,15 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=['safe_pip_upgrade'],
+    scripts=['safe_pip_upgrade/pip_upgrade.py'],
     url='https://github.com/VVyacheslav/safe-pip-upgrade',
     license='MIT',
     author='Vyacheslav Vertliba',
     author_email='vertliba.vv@gmail.com',
     description='Pip safe auto-upgrade',
     install_requires=[
-        'Django',
+        'requests',
+        'pip',
+        'packaging'
     ],
 )

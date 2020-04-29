@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch, _patch, Mock
 
 import requests
 
-from safe_pip_upgrade.pypi import URL_PATTERN
+from safe_pip_upgrade.pypi import PypiPackage
 from safe_pip_upgrade.upgrade import Upgrade
 from tests.fixtures.pypi_fixtures import PYPI_ANSWER
 
@@ -135,7 +135,7 @@ p-4==0.0.4
     @classmethod
     def fake_get(cls, url):
         """ Emulate pypi answer with releases in cls.FAKE_RELEASES. """
-        template = URL_PATTERN.replace('{package}', '(.*)')
+        template = PypiPackage.URL_PATTERN.replace('{package}', '(.*)')
         package = re.search(template, url).group(1)
         response = json.dumps(
             {'releases': {r: [] for r in cls.FAKE_RELEASES[package][0]}})

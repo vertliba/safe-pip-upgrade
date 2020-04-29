@@ -6,7 +6,6 @@ import requests
 from requests import RequestException
 
 logger = logging.getLogger(__name__)
-URL_PATTERN = 'https://pypi.python.org/pypi/{package}/json'
 
 try:
     from packaging.version import parse
@@ -16,17 +15,26 @@ except ImportError:
 
 
 class Packages:
+    """ Pypi packages cache. """
+
     def __init__(self):
         self.packages = {}
 
     def get_package(self, name):
-        return self.packages.setdefault(name, PypiPackage(name))
+        if name in self.packages:
+            return self.packages[name]
+        else:
+            # setdefault evaluates default value even if the key exists
+            return self.packages.setdefault(name, PypiPackage(name))
 
 
 packages = Packages()
 
 
 class PypiPackage:
+    """ Pypi packages parser. """
+    URL_PATTERN = 'https://pypi.python.org/pypi/{package}/json'
+
     def __init__(self, name):
         self.name = name
         self._get_versions()
@@ -59,7 +67,7 @@ class PypiPackage:
     def _get_versions(self):
         """Return version of package on pypi.python.org using json."""
         try:
-            req = requests.get(URL_PATTERN.format(package=self.name))
+            req = requests.get(self.URL_PATTERN.format(package=self.name))
             req.raise_for_status()
         except RequestException as e:
             logger.exception('Can not get access to pypi API: %s',

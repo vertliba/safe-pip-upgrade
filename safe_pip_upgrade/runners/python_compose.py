@@ -1,4 +1,3 @@
-import os
 import subprocess
 import logging
 
@@ -10,22 +9,22 @@ class DockerException(Exception):
 
 
 class ComposeRunner:
-    remote_work_dir = './'  # remote working directory
     requirements_file_name = 'requirements.txt'
 
-    def __init__(self, project_folder, service_name):
+    def __init__(self, project_folder: str, service_name: str,
+                 requirements_file_name: str,
+                 remote_work_dir: str):
+        self.remote_work_dir = remote_work_dir
         self.project_folder = project_folder
-        self.project_name = os.path.split(project_folder)[-1]
         self.service_name = service_name
-        self.daemon_name = self.project_name + '_upgrade'
+        self.requirements_file_name = requirements_file_name.replace('\\', '/')
+        self.daemon_name = service_name + '_upgrade'
 
     def run_tests(self):
         self.check_or_run_daemon()
-        logger.info(f'docker: install requirements start')
-        code = self.run_docker(
-            'exec', self.daemon_name, 'pip', 'install',
-            '-r', self.requirements_file_name
-        ).returncode
+        params = (f'exec {self.daemon_name} pip install -r '
+                  f'{self.requirements_file_name}').split(' ')
+        code = self.run_docker(*params).returncode
 
         logger.info(f'docker: install requirements, return code {code}')
         if code:
@@ -36,16 +35,19 @@ class ComposeRunner:
         logger.info(f'docker: start tests')
         code = self.run_docker(
             'exec', self.daemon_name, 'python', 'manage.py', 'test',
-            '--keepdb', '--no-input'
+            '--failfast', '--keepdb', '--no-input'
         ).returncode
         logger.info(f'docker: tests done, return code {code}')
         return code == 0
 
     def up(self):
         self.run_docker('rm', self.daemon_name, '-f')
+        params = ['-d', '--name', self.daemon_name]
+        if self.remote_work_dir:
+            params.extend(['-w', self.remote_work_dir])
         code = self.run_compose(
             'run',
-            ['-d', '--name', self.daemon_name, '-w', self.remote_work_dir],
+            params,
             args=['sleep', str(60 * 60 * 10)]).returncode
         logger.info(f'docker: up, return code {code}')
         return code == 0
@@ -70,12 +72,14 @@ class ComposeRunner:
         run_params.extend(options)
         run_params.append(self.service_name)
         run_params.extend(args)
+        logger.info(f'>>{" ".join(run_params)}')
         sp = subprocess.run(run_params, check=True, timeout=20,
                             cwd=self.project_folder)
         return sp
 
     def run_docker(self, *options, capture_output=False):
         run_params = ['docker', *options]
+        logger.info(f'>>{" ".join(run_params)}')
         daemon = subprocess.run(run_params, timeout=60 * 10,
                                 capture_output=capture_output)
         return daemon

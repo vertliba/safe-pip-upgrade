@@ -16,16 +16,18 @@ def get_requirements():
 
     Now there is only a file handler. Perhaps there will be more later.
     """
-    return RequirementsLocal(os.path.join(Config.COMPOSE_PROJECT_FOLDER,
-                                          Config.WORKING_DIRECTORY))
+    return RequirementsLocal(os.path.join(Config.WORKING_DIRECTORY,
+                                          Config.LOCAL_REQUIREMENTS_FILE))
 
 
 def get_client():
     if Config.RUNNER == 'compose':
-        runner = ComposeRunner(Config.COMPOSE_PROJECT_FOLDER,
-                               Config.COMPOSE_SERVICE_NAME)
-        runner.remote_work_dir = Config.COMPOSE_WORK_DIR
-        runner.requirements_file_name = Config.COMPOSE_REQUIREMENTS_FILE
+        runner = ComposeRunner(
+            project_folder=Config.COMPOSE_PROJECT_FOLDER,
+            service_name=Config.COMPOSE_SERVICE_NAME,
+            requirements_file_name = Config.COMPOSE_REQUIREMENTS_FILE,
+            remote_work_dir = Config.COMPOSE_WORK_DIR
+        )
         runner.up()
         return runner
 
@@ -50,7 +52,7 @@ class Upgrade:
 
             try:
                 self.try_upgrade_requirement(i)
-            except DockerException:
+            except DockerException as e:
                 self.req_lines[i] = r_line
                 break
 
@@ -59,6 +61,7 @@ class Upgrade:
                 continue
 
         self.req_file.write_lines(self.req_lines)
+        logger.info('All done!')
 
     def try_upgrade_requirement(self, i):
         """ Upgrade requirements.
@@ -72,7 +75,7 @@ class Upgrade:
             self.req_lines[i] = req.get_line()
             self.req_file.write_lines(self.req_lines)
 
-            logger.info(f'try upgrade requirements: {req.get_line()}')
+            logger.info(f'try upgrade requirements: {req.get_line().strip()}')
             if self.client.run_tests():
                 logger.info(f'requirements was upgraded: {req.get_line()}')
                 self.req_file.copy_file('', '_last_pass')

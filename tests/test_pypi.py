@@ -9,6 +9,7 @@ from tests.fixtures.pypi_fixtures import PYPI_ANSWER
 
 
 class PypiPackageTestCase(TestCase):
+    """ Pypi parser test case. """
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -43,22 +44,28 @@ class PypiPackageTestCase(TestCase):
 
 class PackagesTestCase(TestCase):
 
-    @mock.patch('safe_pip_upgrade.pypi.PypiPackage._get_versions', mock.Mock())
-    def test_packages(self):
+    @mock.patch('safe_pip_upgrade.pypi.PypiPackage._get_versions')
+    def test_packages(self, get_versions):
         packages = Packages()
 
-        # test package adding
+        # get package
         package = packages.get_package('django')
         self.assertEqual('django', package.name)
 
-        # test other package adding
+        # get other package
         other_package = packages.get_package('djangorestframework')
         self.assertEqual('djangorestframework', other_package.name)
 
-        # test trying to add package existed return doesn't create new object
+        # trying to add package existed return doesn't create new object
+        # and doesn't get versions again
+        get_versions.reset_mock()
         same_package = packages.get_package('django')
         self.assertIs(package, same_package)
+        get_versions.assert_not_called()
 
+        # trying to add the existed package return doesn't connect to pipy
+        same_package = packages.get_package('django')
+        self.assertIs(package, same_package)
 
 @mock.patch('safe_pip_upgrade.pypi.Packages.get_package', mock.Mock())
 class RequirementTestCase(TestCase):

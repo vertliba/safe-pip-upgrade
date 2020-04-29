@@ -11,10 +11,13 @@ class ComposeTestCase(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.runner = ComposeRunner(Config.COMPOSE_PROJECT_FOLDER, 'django')
+        cls.runner = ComposeRunner(
+            project_folder=Config.COMPOSE_PROJECT_FOLDER,
+            service_name='django',
+            requirements_file_name = Config.COMPOSE_REQUIREMENTS_FILE,
+            remote_work_dir = Config.COMPOSE_WORK_DIR
+        )
 
     def test_docker(self):
-        self.runner.remote_work_dir = Config.COMPOSE_WORK_DIR
-        self.runner.requirements_file_name = Config.COMPOSE_REQUIREMENTS_FILE
         self.runner.up()
         self.assertTrue(self.runner.run_tests())

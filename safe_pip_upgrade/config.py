@@ -15,7 +15,7 @@ class Config:
     COMPOSE_PROJECT_FOLDER = WORKING_DIRECTORY
     COMPOSE_REQUIREMENTS_FILE = LOCAL_REQUIREMENTS_FILE
     COMPOSE_SERVICE_NAME = 'django'
-    COMPOSE_WORK_DIR = './',  # remote working directory
+    COMPOSE_WORK_DIR = None  # remote working directory
     IGNORE_LINE_STARTS = ('# -r https:// http:// git+').split()
 
     command_handler: Callable
@@ -24,15 +24,10 @@ class Config:
 LOGGING = {
     'version': 1,
     'handlers': {
-        'fileHandler': {
+        'file': {
             'class': 'logging.FileHandler',
             'formatter': 'myFormatter',
-            'filename': 'main.log'
-        },
-        'fullHandler': {
-            'class': 'logging.FileHandler',
-            'formatter': 'myFormatter',
-            'filename': 'full.log'
+            'filename': 'pip_upgrade.log'
         },
         'console': {
             'class': 'logging.StreamHandler',
@@ -46,7 +41,7 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['fullHandler'],
+            'handlers': ['file'],
             'level': 'INFO',
         },
     },
@@ -68,7 +63,6 @@ class ConfigFile(configparser.ConfigParser):
                            'IGNORE_LINE_STARTS': str}
     }
 
-
     def write_to_file(self):
         for section, keys in self.MAP.items():
             self[section] = {key: getattr(Config, key) for key in keys}
@@ -78,12 +72,12 @@ class ConfigFile(configparser.ConfigParser):
 
     def read_from_file(self):
         self.read(Config.INI_FILE)
-
-        GETTERS = {str: self.get, int: self.getint}
+        GETTERS = {str: self.get, int: self.getint, bool: self.getboolean}
         for section, keys in self.MAP.items():
             for key, value_type in keys.items():
                 getter = GETTERS[value_type]
-                value = getter(section, key, fallback=None)
+                # noinspection PyArgumentList
+                value = getter(section, key, raw=True, fallback=None)
                 if value is not None:
                     setattr(Config, key, value)
 
