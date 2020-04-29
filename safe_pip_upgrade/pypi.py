@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 try:
     from packaging.version import parse
 except ImportError:
-    # noinspection PyProtectedMember
+    # noinspection PyProtectedMember,PyCompatibility
     from pip._vendor.packaging.version import parse
 
 

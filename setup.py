@@ -1,8 +1,9 @@
 import os
 import re
 import subprocess
-from setuptools import setup  # type: ignore
 from pathlib import Path
+
+from setuptools import setup  # type: ignore
 
 with open('README.md') as f:
     long_description = f.read()
@@ -32,8 +33,8 @@ def get_version():
             version = '.post'.join(version.split('-')[:2])
 
         # Don't declare a version "dirty" merely because a time stamp has
-        # changed. If it is dirty, append a ".dev1" suffix to indicate a
-        # development revision after the release.
+        # changed. If it is dirty, append a ".dev1" suffix to indicate
+        # a development revision after the release.
         with open(os.devnull, 'w') as fd_devnull:
             subprocess.call(['git', 'status'],
                             stdout=fd_devnull, stderr=fd_devnull)

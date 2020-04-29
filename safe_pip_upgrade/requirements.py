@@ -30,13 +30,13 @@ class RecognizeException(SafeUpgradeException):
 
 
 class Requirement:
-    """ Contain """
+    """ Package in requirements. """
     type = None
-    # current_version = None
     error_version = None
     package = None
     version = None
     previous_version = None
+    name: str
 
     def __init__(self, line):
         self.recognize(line)

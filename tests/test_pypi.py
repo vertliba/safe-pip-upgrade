@@ -3,8 +3,8 @@ from unittest.case import TestCase
 
 import requests
 
-from safe_pip_upgrade.requirements import RequirementType, Requirement
 from safe_pip_upgrade.pypi import PypiPackage, Packages
+from safe_pip_upgrade.requirements import RequirementType, Requirement
 from tests.fixtures.pypi_fixtures import PYPI_ANSWER
 
 
@@ -67,6 +67,7 @@ class PackagesTestCase(TestCase):
         same_package = packages.get_package('django')
         self.assertIs(package, same_package)
 
+
 @mock.patch('safe_pip_upgrade.pypi.Packages.get_package', mock.Mock())
 class RequirementTestCase(TestCase):
 
@@ -102,7 +103,7 @@ class RequirementTestCase(TestCase):
         }
         req = Requirement('ppci')
         for line, params in TEST_EXAMPLES.items():
-            result = req.recognize_comment(line)
+            req.recognize_comment(line)
             with self.subTest(line):
                 self.assertEqual(params[0], req.type)
                 self.assertEqual(params[1], req.error_version)
@@ -118,7 +119,7 @@ class RequirementTestCase(TestCase):
         }
         req = Requirement('ppci')
         for line, params in TEST_EXAMPLES.items():
-            result = req.recognize_package_and_version(line)
+            req.recognize_package_and_version(line)
             with self.subTest(line):
                 self.assertEqual(params[0], req.name, 'name')
                 self.assertEqual(params[1], req.version, 'version')

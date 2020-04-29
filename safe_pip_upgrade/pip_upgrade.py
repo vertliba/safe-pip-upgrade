@@ -2,7 +2,8 @@
 """
 Pip-safe-upgrade automatically updates your pip requirements.
 
-It try to gradually upgrade your requirements one by one while the tests pass.
+It tries to gradually upgrade your requirements one by one while the tests
+pass.
 """
 import argparse
 import os
@@ -27,7 +28,7 @@ class ManagementUtility:
         )
 
         # COMMANDS
-        subparsers  = parser.add_subparsers(help='Command')
+        subparsers = parser.add_subparsers(help='Command')
 
         # upgrade
         parser_upgrade = subparsers.add_parser('UPGRADE', help='start upgrade')
@@ -64,28 +65,31 @@ class ManagementUtility:
             "-u", "--runner", metavar="RUNNER", dest='RUNNER',
             help='Specify runner (only "compose" is available now).')
 
-
         # COMPOSE RUNNER SETTINGS
         compose_group = parser.add_argument_group('COMPOSE RUNNER PARAMETERS')
 
+        # compose project directory
         compose_group.add_argument(
             "-cd", "--compose-project-directory", metavar="DIR",
             dest='COMPOSE_PROJECT_FOLDER',
             help='Specify an alternate project directory (default: '
                  'work-directory if defined, otherwise current directory')
 
+        # compose requirements file
         compose_group.add_argument(
-            "-cr", "--compose-requirement", metavar="FILE",
+            "-cr", "--compose-requirements", metavar="FILE",
             dest='COMPOSE_REQUIREMENTS_FILE',
             help='Specify compose requirements file '
                  '(default: compose working directory.')
 
+        # compose service name
         compose_group.add_argument(
             "-cs", "--compose-service", metavar="DIR",
             dest='COMPOSE_SERVICE_NAME',
             help='Specify compose service name '
                  '(default: "django".')
 
+        # compose work directory
         compose_group.add_argument(
             "-crd", "--compose-work-dir", metavar="DIR",
             dest='COMPOSE_WORK_DIR',
@@ -97,8 +101,6 @@ class ManagementUtility:
             parser.print_help()
         else:
             args.command_handler()
-        # args = parser.parse_args(['CREATE-INI'], namespace=Config)
-
 
 
 utility = ManagementUtility()

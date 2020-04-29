@@ -41,14 +41,26 @@ After that you run the program with requirement parameters safe_pip_upgrade will
 Usage
 -----
 
+Using safe-pip-upgrade is basically a two-step process.
 
-### The main parameters
+1. Define your app's parameters with a `pip_upgrade.ini`
+2. Run ```pip-upgrade.py UPGRADE``` to start the upgrade of your requirements 
 
-```python
-REQUIREMENTS_FILE = 'deploy/requirements.txt' # path to the requirements file in docker container
-LOCAL_REQUIREMENTS_FILE = r'C:\work\big-project\deploy\requirements\requirements.txt' # the local path to the requirements file 
+A `pip_upgrade.ini` looks like this:
 
-PROJECT_FOLDER = r'C:\work\big-project' # the local project path
-COMPOSE_SERVICE_NAME = 'django' # the docker-compose service name
-REMOTE_WORK_DIR = '/app'  # remote working directory
+```ini
+[MAIN]
+working_directory = ./  # change it if you want to start upgrade from other directory.
+local_requirements_file = requirements.txt # path and name of the requirements file relative to the working directory
+
+[COMPOSE RUNNER]
+compose_project_folder = . # path to your docker-compose file
+compose_requirements_file = requirements.txt # path and name of the requirements file in docker container relative to CWD in your Dockerfile 
+compose_service_name = django # name of the docker-compose service
+compose_work_dir = # set it if you want to change working directory in container 
+ignore_line_starts = ['#', '-r', 'https://', 'http://', 'git+'] # list of the line beginnings you want to ignore 
 ```
+
+You can run ```pip_upgrade.py CREATE-INI``` so that pip-upgrade automatically creates an ini-file for you 
+
+All ini-files option can also be defined with command keys. Type ```pip_upgrade.py``` to see a detailed description.

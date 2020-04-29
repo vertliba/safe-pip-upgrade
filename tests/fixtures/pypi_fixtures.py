@@ -1,5 +1,6 @@
 import json
 
+# noinspection SpellCheckingInspection
 PYPI_ANSWER = json.dumps({
     'releases': {
         '0.0.1': [{'comment_text': '',

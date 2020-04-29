@@ -1,12 +1,12 @@
 import logging
 import os
 from logging import INFO
-from safe_pip_upgrade.config import Config as Config
 
-from safe_pip_upgrade.runners.python_compose import (ComposeRunner,
-                                                     DockerException)
+from safe_pip_upgrade.config import Config as Config
 from safe_pip_upgrade.requirements import Requirement, RecognizeException
 from safe_pip_upgrade.requirements_file import RequirementsLocal
+from safe_pip_upgrade.runners.python_compose import (ComposeRunner,
+                                                     DockerException)
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +25,8 @@ def get_client():
         runner = ComposeRunner(
             project_folder=Config.COMPOSE_PROJECT_FOLDER,
             service_name=Config.COMPOSE_SERVICE_NAME,
-            requirements_file_name = Config.COMPOSE_REQUIREMENTS_FILE,
-            remote_work_dir = Config.COMPOSE_WORK_DIR
+            requirements_file_name=Config.COMPOSE_REQUIREMENTS_FILE,
+            remote_work_dir=Config.COMPOSE_WORK_DIR
         )
         runner.up()
         return runner
@@ -52,7 +52,7 @@ class Upgrade:
 
             try:
                 self.try_upgrade_requirement(i)
-            except DockerException as e:
+            except DockerException:
                 self.req_lines[i] = r_line
                 break
 
@@ -84,8 +84,10 @@ class Upgrade:
                 req.fix_error_version()
         self.req_lines[i] = req.get_line()
 
+
 def start_upgrade():
     Upgrade(get_client(), get_requirements()).start_upgrade()
+
 
 if __name__ == '__main__':
     start_upgrade()

@@ -16,7 +16,7 @@ class Config:
     COMPOSE_REQUIREMENTS_FILE = LOCAL_REQUIREMENTS_FILE
     COMPOSE_SERVICE_NAME = 'django'
     COMPOSE_WORK_DIR = None  # remote working directory
-    IGNORE_LINE_STARTS = ('# -r https:// http:// git+').split()
+    IGNORE_LINE_STARTS = '# -r https:// http:// git+'.split()
 
     command_handler: Callable
 

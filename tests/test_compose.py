@@ -14,8 +14,8 @@ class ComposeTestCase(TestCase):
         cls.runner = ComposeRunner(
             project_folder=Config.COMPOSE_PROJECT_FOLDER,
             service_name='django',
-            requirements_file_name = Config.COMPOSE_REQUIREMENTS_FILE,
-            remote_work_dir = Config.COMPOSE_WORK_DIR
+            requirements_file_name=Config.COMPOSE_REQUIREMENTS_FILE,
+            remote_work_dir=Config.COMPOSE_WORK_DIR
         )
 
     def test_docker(self):

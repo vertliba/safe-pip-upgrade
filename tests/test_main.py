@@ -14,7 +14,7 @@ from tests.fixtures.pypi_fixtures import PYPI_ANSWER
 try:
     from packaging.version import parse
 except ImportError:  # pragma: no cover
-    # noinspection PyProtectedMember
+    # noinspection PyProtectedMember,PyCompatibility
     from pip._vendor.packaging.version import parse
 
 
