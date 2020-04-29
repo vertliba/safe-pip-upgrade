@@ -52,13 +52,13 @@ A `pip_upgrade.ini` looks like this:
 [MAIN]
 working_directory = ./  # change it if you want to start upgrade from other directory.
 local_requirements_file = requirements.txt # path and name of the requirements file relative to the working directory
+ignore_line_starts = ['#', '-r', 'https://', 'http://', 'git+'] # list of the line beginnings you want to ignore 
 
 [COMPOSE RUNNER]
 compose_project_folder = . # path to your docker-compose file
 compose_requirements_file = requirements.txt # path and name of the requirements file in docker container relative to CWD in your Dockerfile 
 compose_service_name = django # name of the docker-compose service
 compose_work_dir = # set it if you want to change working directory in container 
-ignore_line_starts = ['#', '-r', 'https://', 'http://', 'git+'] # list of the line beginnings you want to ignore 
 ```
 
 You can run ```pip_upgrade.py CREATE-INI``` so that pip-upgrade automatically creates an ini-file for you 

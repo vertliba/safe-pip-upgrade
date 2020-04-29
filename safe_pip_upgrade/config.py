@@ -8,6 +8,7 @@ class Config:
     INI_FILE = 'pip_upgrade.ini'
     WORKING_DIRECTORY = r'./'
     LOCAL_REQUIREMENTS_FILE = r'./requirements.txt'
+    IGNORE_LINE_STARTS = '# -r https:// http:// git+'.split()
 
     RUNNER = 'compose'
 
@@ -16,7 +17,6 @@ class Config:
     COMPOSE_REQUIREMENTS_FILE = LOCAL_REQUIREMENTS_FILE
     COMPOSE_SERVICE_NAME = 'django'
     COMPOSE_WORK_DIR = None  # remote working directory
-    IGNORE_LINE_STARTS = '# -r https:// http:// git+'.split()
 
     command_handler: Callable
 
@@ -55,12 +55,12 @@ class ConfigFile(configparser.ConfigParser):
     MAP = {
         'MAIN': {'INI_FILE': str,
                  'WORKING_DIRECTORY': str,
-                 'LOCAL_REQUIREMENTS_FILE': str},
+                 'LOCAL_REQUIREMENTS_FILE': str,
+                 'IGNORE_LINE_STARTS': str},
         'COMPOSE RUNNER': {'COMPOSE_PROJECT_FOLDER': str,
                            'COMPOSE_REQUIREMENTS_FILE': str,
                            'COMPOSE_SERVICE_NAME': str,
-                           'COMPOSE_WORK_DIR': str,
-                           'IGNORE_LINE_STARTS': str}
+                           'COMPOSE_WORK_DIR': str}
     }
 
     def write_to_file(self):
