@@ -63,7 +63,7 @@ setup(
     version=get_version() or 'dev',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=['safe_pip_upgrade'],
+    packages=['safe_pip_upgrade', 'safe_pip_upgrade.runners'],
     scripts=['safe_pip_upgrade/pip_upgrade.py'],
     url='https://github.com/VVyacheslav/safe-pip-upgrade',
     license='MIT',
