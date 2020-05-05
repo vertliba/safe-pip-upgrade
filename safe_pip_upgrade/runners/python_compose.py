@@ -29,7 +29,7 @@ class ComposeRunner:
         logger.info(f'docker: install requirements, return code {code}')
         if code:
             logger.error('docker: failed to install requirements.')
-            raise DockerException('failed to install requirements')
+            return False
 
         self.check_or_run_daemon()
         logger.info(f'docker: start tests')
