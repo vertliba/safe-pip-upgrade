@@ -22,7 +22,13 @@ pip install safe-pip-upgrade
 Work algorithm
 ----------------------
 
-After that you run the program with requirement parameters safe_pip_upgrade will do:
+Pip-safe-upgrade try to upgrade the packages versions in requirements file one by one, run your tests after every 
+step and if the tests fail it returns version back. The whole workflow goes without rebuilding the docker image
+and hence is very fast.
+
+Additionally pip-safe-upgrade add sensible comments to requirements file.
+
+Here is a detailed algorithm of what safe-pip will do after launch:
 
 1. starts the container in daemon mode (runs `docker-compose run project sleep 3590`).
 1. read the next package in requirements.

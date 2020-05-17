@@ -5,3 +5,5 @@
 /venv*/
 /env/
 pip_upgrade.ini
+/build/
+/dist/
