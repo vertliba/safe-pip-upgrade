@@ -1,8 +1,11 @@
 import re
 from enum import Enum, auto
 
-from safe_pip_upgrade import SafeUpgradeException
-from safe_pip_upgrade.pypi import packages
+from safe_pip_upgrade.pypi import pypi_packages
+
+
+class RecognizeException(Exception):
+    pass
 
 
 # Comments for packages that having been analyzed.
@@ -23,10 +26,6 @@ TEMPLATES = {
     RequirementType.FINAL_LATEST_VERSION: r'the latest working version',
     RequirementType.NOT_LATEST_VERSION: r'error on the version (\S*)',
 }
-
-
-class RecognizeException(SafeUpgradeException):
-    pass
 
 
 class Requirement:
@@ -63,7 +62,7 @@ class Requirement:
         if self.type == RequirementType.FINAL_LATEST_VERSION:
             return False
 
-        self.package = packages.get_package(self.name)
+        self.package = pypi_packages.get_package(self.name)
 
         # get the latest version that may work
         if self.type == RequirementType.NOT_LATEST_VERSION:

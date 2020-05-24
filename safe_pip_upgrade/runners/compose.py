@@ -1,71 +1,69 @@
 import logging
 import subprocess
 
+from safe_pip_upgrade.core.upgrade import RunnerException
+
 logger = logging.getLogger(__name__)
-
-
-class DockerException(Exception):
-    pass
 
 
 class ComposeRunner:
     requirements_file_name = 'requirements.txt'
 
-    def __init__(self, project_folder: str, service_name: str,
-                 requirements_file_name: str,
-                 remote_work_dir: str):
-        self.remote_work_dir = remote_work_dir
-        self.project_folder = project_folder
-        self.service_name = service_name
-        self.requirements_file_name = requirements_file_name.replace('\\', '/')
-        self.daemon_name = service_name + '_upgrade'
+    def __init__(self, config):
+        self.remote_work_dir = config.COMPOSE_WORK_DIR
+        self.project_folder = config.COMPOSE_PROJECT_FOLDER
+        self.service_name = config.COMPOSE_SERVICE_NAME
+        self.requirements_file_name = config.COMPOSE_REQUIREMENTS_FILE.replace(
+            r'\\', '/')
+        self.daemon_name = self.service_name + '_upgrade'
+        self._docker_up()
 
     def run_tests(self):
-        self.check_or_run_daemon()
+        self._check_or_run_daemon()
         params = (f'exec {self.daemon_name} pip install -r '
                   f'{self.requirements_file_name}').split(' ')
-        code = self.run_docker(*params).returncode
+        code = self._run_docker(*params).returncode
 
         logger.info(f'docker: install requirements, return code {code}')
         if code:
             logger.error('docker: failed to install requirements.')
             return False
 
-        self.check_or_run_daemon()
+        self._check_or_run_daemon()
         logger.info(f'docker: start tests')
-        code = self.run_docker(
+        code = self._run_docker(
             'exec', self.daemon_name, 'python', 'manage.py', 'test',
             '--failfast', '--keepdb', '--no-input'
         ).returncode
         logger.info(f'docker: tests done, return code {code}')
         return code == 0
 
-    def up(self):
-        self.run_docker('rm', self.daemon_name, '-f')
+    def _docker_up(self):
+        self._run_docker('rm', self.daemon_name, '-f')
         params = ['-d', '--name', self.daemon_name]
         if self.remote_work_dir:
             params.extend(['-w', self.remote_work_dir])
-        code = self.run_compose(
+        code = self._run_compose(
             'run',
             params,
             args=['sleep', str(60 * 60 * 10)]).returncode
         logger.info(f'docker: up, return code {code}')
         return code == 0
 
-    def check_daemon(self):
+    def _check_daemon(self):
         options = ['-f', f'name={self.daemon_name}']
-        result = self.run_docker('ps', *options, capture_output=True)
+        result = self._run_docker('ps', *options, capture_output=True)
         return self.daemon_name.encode() in result.stdout
 
-    def check_or_run_daemon(self):
-        if not self.check_daemon():
+    def _check_or_run_daemon(self):
+        if not self._check_daemon():
             logger.info('docker: check container: stopped, restart.')
-            self.up()
-            if not self.check_daemon():
+            self._docker_up()
+            if not self._check_daemon():
                 logger.error('docker: container is stopped after restart!')
-                raise DockerException('')
+                raise DockerException()
 
-    def run_compose(self, command, options=(), args=()):
+    def _run_compose(self, command, options=(), args=()):
         run_params = ['docker-compose']
         run_params.extend(['--project-directory', self.project_folder])
         run_params.append(command)
@@ -77,9 +75,13 @@ class ComposeRunner:
                             cwd=self.project_folder)
         return sp
 
-    def run_docker(self, *options, capture_output=False):
+    def _run_docker(self, *options, capture_output=False):
         run_params = ['docker', *options]
         logger.info(f'>>{" ".join(run_params)}')
         daemon = subprocess.run(run_params, timeout=60 * 10,
                                 capture_output=capture_output)
         return daemon
+
+
+class DockerException(RunnerException):
+    pass

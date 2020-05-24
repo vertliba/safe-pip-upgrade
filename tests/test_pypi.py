@@ -3,8 +3,8 @@ from unittest.case import TestCase
 
 import requests
 
-from safe_pip_upgrade.pypi import PypiPackage, Packages
-from safe_pip_upgrade.requirements import RequirementType, Requirement
+from safe_pip_upgrade.pypi import PypiPackage, PypiPackages
+from safe_pip_upgrade.core.packages import RequirementType, Requirement
 from tests.fixtures.pypi_fixtures import PYPI_ANSWER
 
 
@@ -46,29 +46,26 @@ class PackagesTestCase(TestCase):
 
     @mock.patch('safe_pip_upgrade.pypi.PypiPackage._get_versions')
     def test_packages(self, get_versions):
-        packages = Packages()
+        packages = PypiPackages()
 
         # get package
         package = packages.get_package('django')
-        self.assertEqual('django', package.name)
-
         # get other package
         other_package = packages.get_package('djangorestframework')
+
+        # the package names is correct
+        self.assertEqual('django', package.name)
         self.assertEqual('djangorestframework', other_package.name)
 
         # trying to add package existed return doesn't create new object
-        # and doesn't get versions again
+        # and doesn't get versions from pypi again
         get_versions.reset_mock()
         same_package = packages.get_package('django')
         self.assertIs(package, same_package)
         get_versions.assert_not_called()
 
-        # trying to add the existed package return doesn't connect to pipy
-        same_package = packages.get_package('django')
-        self.assertIs(package, same_package)
 
-
-@mock.patch('safe_pip_upgrade.pypi.Packages.get_package', mock.Mock())
+@mock.patch('safe_pip_upgrade.pypi.PypiPackages.get_package', mock.Mock())
 class RequirementTestCase(TestCase):
 
     @classmethod

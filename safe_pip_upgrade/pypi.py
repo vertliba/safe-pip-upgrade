@@ -14,21 +14,21 @@ except ImportError:
     from pip._vendor.packaging.version import parse
 
 
-class Packages:
+class PypiPackages:
     """ Pypi packages cache. """
 
     def __init__(self):
-        self.packages = {}
+        self._packages = {}
 
     def get_package(self, name):
-        if name in self.packages:
-            return self.packages[name]
+        if name in self._packages:
+            return self._packages[name]
         else:
             # setdefault evaluates default value even if the key exists
-            return self.packages.setdefault(name, PypiPackage(name))
+            return self._packages.setdefault(name, PypiPackage(name))
 
 
-packages = Packages()
+pypi_packages = PypiPackages()
 
 
 class PypiPackage:

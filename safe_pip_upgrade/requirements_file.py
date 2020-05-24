@@ -27,7 +27,7 @@ class RequirementsLocal:
             f.writelines(requirements)
 
     def copy_file(self, from_suffix, to_suffix):
-        """ Copy requirements file with an other suffix. """
+        """ Copy requirements file with another suffix. """
         copy(self.file_with_suffix(from_suffix),
              self.file_with_suffix(to_suffix))
 

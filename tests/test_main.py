@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch, _patch, Mock
 import requests
 
 from safe_pip_upgrade.pypi import PypiPackage
-from safe_pip_upgrade.upgrade import Upgrade
+from safe_pip_upgrade.core.upgrade import Upgrade
 from tests.fixtures.pypi_fixtures import PYPI_ANSWER
 
 try:

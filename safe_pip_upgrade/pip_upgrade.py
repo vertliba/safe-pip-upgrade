@@ -9,8 +9,10 @@ import argparse
 import os
 import sys
 
-from safe_pip_upgrade.config import Config, config_file
-from safe_pip_upgrade.upgrade import start_upgrade
+from safe_pip_upgrade.config import config_file, Config
+from safe_pip_upgrade.requirements_file import RequirementsLocal
+from safe_pip_upgrade.runners.compose import ComposeRunner
+from safe_pip_upgrade.core.upgrade import Upgrade
 
 
 class ManagementUtility:
@@ -105,3 +107,24 @@ class ManagementUtility:
 
 utility = ManagementUtility()
 utility.execute()
+
+
+def start_upgrade():
+    core = Upgrade(client=get_client(),
+                   req_file=get_requirements())
+    core.start_upgrade()
+
+
+def get_requirements():
+    """ Get requirements file handler.
+
+    Now there is only a file handler. Perhaps there will be more later.
+    """
+    return RequirementsLocal(os.path.join(Config.WORKING_DIRECTORY,
+                                          Config.LOCAL_REQUIREMENTS_FILE))
+
+
+def get_client():
+    """ Get the Django-runner. """
+    if Config.RUNNER == 'compose':
+        return ComposeRunner(Config)

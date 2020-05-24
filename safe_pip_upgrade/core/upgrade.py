@@ -1,35 +1,18 @@
 import logging
-import os
 from logging import INFO
 
-from safe_pip_upgrade.config import Config as Config
-from safe_pip_upgrade.requirements import Requirement, RecognizeException
-from safe_pip_upgrade.requirements_file import RequirementsLocal
-from safe_pip_upgrade.runners.python_compose import (ComposeRunner,
-                                                     DockerException)
+from safe_pip_upgrade.config import Config
+from safe_pip_upgrade.core.packages import Requirement, RecognizeException
 
 logger = logging.getLogger(__name__)
 
 
-def get_requirements():
-    """ Get requirements file handler.
-
-    Now there is only a file handler. Perhaps there will be more later.
-    """
-    return RequirementsLocal(os.path.join(Config.WORKING_DIRECTORY,
-                                          Config.LOCAL_REQUIREMENTS_FILE))
+class SafeUpgradeException(Exception):
+    pass
 
 
-def get_client():
-    if Config.RUNNER == 'compose':
-        runner = ComposeRunner(
-            project_folder=Config.COMPOSE_PROJECT_FOLDER,
-            service_name=Config.COMPOSE_SERVICE_NAME,
-            requirements_file_name=Config.COMPOSE_REQUIREMENTS_FILE,
-            remote_work_dir=Config.COMPOSE_WORK_DIR
-        )
-        runner.up()
-        return runner
+class RunnerException(SafeUpgradeException):
+    pass
 
 
 class Upgrade:
@@ -52,7 +35,7 @@ class Upgrade:
 
             try:
                 self.try_upgrade_requirement(i)
-            except DockerException:
+            except RunnerException:
                 self.req_lines[i] = r_line
                 break
 
@@ -83,11 +66,3 @@ class Upgrade:
                 logger.info(f'upgrade failed: {req.get_line()}')
                 req.fix_error_version()
         self.req_lines[i] = req.get_line()
-
-
-def start_upgrade():
-    Upgrade(get_client(), get_requirements()).start_upgrade()
-
-
-if __name__ == '__main__':
-    start_upgrade()
