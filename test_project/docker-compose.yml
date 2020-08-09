@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+
+  python:
+    image: python:3.8-alpine
+    container_name: "test_pip_upgrade"
+    restart: unless-stopped
+    volumes:
+    - "./:/app"

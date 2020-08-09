@@ -62,8 +62,6 @@ class Requirement:
         if self.type == RequirementType.FINAL_LATEST_VERSION:
             return False
 
-        self.package = pypi_packages.get_package(self.name)
-
         # get the latest version that may work
         if self.type == RequirementType.NOT_LATEST_VERSION:
             # get version between the current and last
@@ -117,8 +115,11 @@ class Requirement:
     def recognize_package_and_version(self, package):
         match = re.split(r'[>=<~\s,]+', package)
         self.name = match[0]
+        self.package = pypi_packages.get_package(self.name)
         if len(match) > 1:
             self.version = match[1]
+        else:
+            self.version = self.package.last_version
 
     def split_line(self, line):
         # type: (str) -> tuple

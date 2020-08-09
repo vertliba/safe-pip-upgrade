@@ -7,3 +7,7 @@
 pip_upgrade.ini
 /build/
 /dist/
+/test_project/requirements.txt
+/htmlcov/
+.coverage
+/test_project/requirements_last_pass.txt
