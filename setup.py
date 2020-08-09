@@ -66,7 +66,11 @@ setup(
     packages=['safe_pip_upgrade',
               'safe_pip_upgrade.runners',
               'safe_pip_upgrade.core', ],
-    scripts=['safe_pip_upgrade/pip_upgrade.py'],
+    entry_points={
+        "console_scripts": [
+            "pip-upgrade = safe_pip_upgrade.pip_upgrade:main",
+        ],
+    },
     url='https://github.com/VVyacheslav/safe-pip-upgrade',
     license='MIT',
     author='Vyacheslav Vertliba',

@@ -3,9 +3,10 @@ from unittest.case import TestCase
 
 import requests
 
-from safe_pip_upgrade.pypi import PypiPackage, PypiPackages
+from safe_pip_upgrade import pypi
+from safe_pip_upgrade.pypi import PypiPackage, PypiPackages, pypi_packages
 from safe_pip_upgrade.core.packages import RequirementType, Requirement
-from tests.fixtures.pypi_fixtures import PYPI_ANSWER
+from .fixtures.pypi_fixtures import PYPI_ANSWER
 
 
 class PypiPackageTestCase(TestCase):
@@ -65,32 +66,31 @@ class PackagesTestCase(TestCase):
         get_versions.assert_not_called()
 
 
-@mock.patch('safe_pip_upgrade.pypi.PypiPackages.get_package', mock.Mock())
 class RequirementTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        with mock.patch('safe_pip_upgrade.pypi.requests.get', ) as req:
+        with mock.patch('requests.get') as req:
             req.return_value.status_code = requests.codes.ok
             req.return_value.text = PYPI_ANSWER
-            cls.package = PypiPackage('ppci')
+            cls.package = pypi_packages.get_package('ppci')
 
     def test_split_line(self):
-        TEST_EXAMPLES = {
+        test_examples = {
             'ppci~=2.1.1 # the latest working version': (
                 'ppci~=2.1.1', 'the latest working version'),
             'ppci>0.3.0,<0.4.0': (
                 'ppci>0.3.0,<0.4.0', ''),
         }
         req = Requirement('ppci')
-        for line, params in TEST_EXAMPLES.items():
+        for line, params in test_examples.items():
             result = req.split_line(line)
             with self.subTest(line):
                 self.assertEqual(params, result)
 
     def test_recognize_comment(self):
-        TEST_EXAMPLES = {
+        test_examples = {
             '': (
                 RequirementType.LATEST_VERSION, None),
             'the latest working version': (
@@ -99,30 +99,29 @@ class RequirementTestCase(TestCase):
                 RequirementType.NOT_LATEST_VERSION, '2.1.1'),
         }
         req = Requirement('ppci')
-        for line, params in TEST_EXAMPLES.items():
+        for line, params in test_examples.items():
             req.recognize_comment(line)
             with self.subTest(line):
                 self.assertEqual(params[0], req.type)
                 self.assertEqual(params[1], req.error_version)
 
     def test_recognize_package_and_version(self):
-        TEST_EXAMPLES = {
-            'ppci': (
-                'ppci', None),
-            'ppci~=2.1.1': (
-                'ppci', '2.1.1'),
-            'ppci>0.3.0,<0.4.0': (
-                'ppci', '0.3.0'),
+        test_examples = {
+            # if requirements.txt doesn't specify version - use
+            # the latest one
+            'ppci': ('ppci', '0.5.7'),
+            'ppci~=2.1.1': ('ppci', '2.1.1'),
+            'ppci>0.3.0,<0.4.0': ('ppci', '0.3.0'),
         }
         req = Requirement('ppci')
-        for line, params in TEST_EXAMPLES.items():
+        for line, params in test_examples.items():
             req.recognize_package_and_version(line)
             with self.subTest(line):
                 self.assertEqual(params[0], req.name, 'name')
                 self.assertEqual(params[1], req.version, 'version')
 
     def test_recognize_all(self):
-        TEST_EXAMPLES = {
+        test_examples = {
             'ppci==2.1.1': (
                 'ppci', '2.1.1', RequirementType.LATEST_VERSION, None),
             'ppci~=2.1.1 # the latest working version': (
@@ -134,7 +133,7 @@ class RequirementTestCase(TestCase):
             'ppci>=4.0.7,<4.1.0': (
                 'ppci', '4.0.7', RequirementType.LATEST_VERSION, None),
         }
-        for line, params in TEST_EXAMPLES.items():
+        for line, params in test_examples.items():
             with self.subTest(line):
                 req = Requirement(line)
                 self.assertEqual(params[0], req.name, 'name')

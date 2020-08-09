@@ -9,7 +9,7 @@ import requests
 
 from safe_pip_upgrade.pypi import PypiPackage
 from safe_pip_upgrade.core.upgrade import Upgrade
-from tests.fixtures.pypi_fixtures import PYPI_ANSWER
+from .fixtures.pypi_fixtures import PYPI_ANSWER
 
 try:
     from packaging.version import parse

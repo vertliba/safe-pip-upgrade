@@ -10,6 +10,7 @@ class ComposeRunner:
     requirements_file_name = 'requirements.txt'
 
     def __init__(self, config):
+        self.config = config
         self.remote_work_dir = config.COMPOSE_WORK_DIR
         self.project_folder = config.COMPOSE_PROJECT_FOLDER
         self.service_name = config.COMPOSE_SERVICE_NAME
@@ -32,14 +33,13 @@ class ComposeRunner:
         self._check_or_run_daemon()
         logger.info(f'docker: start tests')
         code = self._run_docker(
-            'exec', self.daemon_name, 'python', 'manage.py', 'test',
-            '--failfast', '--keepdb', '--no-input'
+            'exec', self.daemon_name, *self.config.TEST_START_COMMAND.split()
         ).returncode
         logger.info(f'docker: tests done, return code {code}')
         return code == 0
 
     def _docker_up(self):
-        self._run_docker('rm', self.daemon_name, '-f')
+        self._delete_test_container()
         params = ['-d', '--name', self.daemon_name]
         if self.remote_work_dir:
             params.extend(['-w', self.remote_work_dir])
@@ -49,6 +49,9 @@ class ComposeRunner:
             args=['sleep', str(60 * 60 * 10)]).returncode
         logger.info(f'docker: up, return code {code}')
         return code == 0
+
+    def _delete_test_container(self):
+        self._run_docker('rm', self.daemon_name, '-f')
 
     def _check_daemon(self):
         options = ['-f', f'name={self.daemon_name}']
@@ -65,7 +68,6 @@ class ComposeRunner:
 
     def _run_compose(self, command, options=(), args=()):
         run_params = ['docker-compose']
-        run_params.extend(['--project-directory', self.project_folder])
         run_params.append(command)
         run_params.extend(options)
         run_params.append(self.service_name)

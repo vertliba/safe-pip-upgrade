@@ -8,7 +8,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -25,4 +25,5 @@ jobs:
         python --version
     - name: Run Tests
       run: |
-        python -m unittest discover
+        python -m unittest discover -s tests/functional_docker_tests/ -t tests/
+        python -m unittest discover -s tests/unittests -t tests/

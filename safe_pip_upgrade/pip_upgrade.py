@@ -14,6 +14,26 @@ from safe_pip_upgrade.requirements_file import RequirementsLocal
 from safe_pip_upgrade.runners.compose import ComposeRunner
 from safe_pip_upgrade.core.upgrade import Upgrade
 
+def start_upgrade():
+    core = Upgrade(client=get_client(),
+                   req_file=get_requirements())
+    core.start_upgrade()
+
+
+def get_requirements():
+    """ Get requirements file handler.
+
+    Now there is only a file handler. Perhaps there will be more later.
+    """
+    return RequirementsLocal(os.path.join(Config.WORKING_DIRECTORY,
+                                          Config.LOCAL_REQUIREMENTS_FILE))
+
+
+def get_client():
+    """ Get the test-runner. """
+    if Config.RUNNER == 'compose':
+        return ComposeRunner(Config)
+
 
 class ManagementUtility:
     """ Encapsulate the logic of the django-admin and manage.py utilities. """
@@ -104,27 +124,6 @@ class ManagementUtility:
         else:
             args.command_handler()
 
-
-utility = ManagementUtility()
-utility.execute()
-
-
-def start_upgrade():
-    core = Upgrade(client=get_client(),
-                   req_file=get_requirements())
-    core.start_upgrade()
-
-
-def get_requirements():
-    """ Get requirements file handler.
-
-    Now there is only a file handler. Perhaps there will be more later.
-    """
-    return RequirementsLocal(os.path.join(Config.WORKING_DIRECTORY,
-                                          Config.LOCAL_REQUIREMENTS_FILE))
-
-
-def get_client():
-    """ Get the Django-runner. """
-    if Config.RUNNER == 'compose':
-        return ComposeRunner(Config)
+def main():
+    utility = ManagementUtility()
+    utility.execute()
