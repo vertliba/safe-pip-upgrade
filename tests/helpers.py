@@ -11,6 +11,6 @@ def get_package_last_version(package_name: str) -> str:
     req.raise_for_status()
     j = json.loads(req.text)
     raw_releases = j.get('releases', [])
-    all_releases = sorted([parsed for r in raw_releases
-                           if not (parsed := parse(r)).is_prerelease])
+    all_releases = sorted([parse(r) for r in raw_releases
+                           if not parse(r).is_prerelease])
     return all_releases[-1].base_version
