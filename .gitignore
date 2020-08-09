@@ -4,7 +4,6 @@
 *.egg-info
 /venv*/
 /env/
-pip_upgrade.ini
 /build/
 /dist/
 /test_project/requirements.txt

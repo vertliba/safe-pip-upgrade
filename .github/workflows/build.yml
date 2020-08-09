@@ -25,5 +25,6 @@ jobs:
         python --version
     - name: Run Tests
       run: |
-        python -m unittest discover -s tests/unittests -t tests/
+        ls
         python -m unittest discover -s tests/functional_docker_tests/ -t tests/
+        python -m unittest discover -s tests/unittests -t tests/
