@@ -11,3 +11,4 @@ pip_upgrade.ini
 /htmlcov/
 .coverage
 /test_project/requirements_last_pass.txt
+/test_project/requirements_backup_*
