@@ -3,5 +3,5 @@ rules==0.4
 Faker==4.1.1
 
 # Next lines will be ignored because of comments
-requests==2.24.0 # the latest working version
+requests==2.31.0 # the latest working version
 packaging==20.4 # the latest working version
